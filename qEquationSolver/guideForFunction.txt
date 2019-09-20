@@ -1,0 +1,10 @@
+--------qSolver func---------
+This function processes the following input:
+ - solver (a, b, c) //solver (1, 0.5, 2)
+"a", "b", "c" aruments can be either integers or float-values. 
+The answer will always be a couple of float-values, 
+but when the discriminant of the equation is less than zero,
+a corresponding message about the lack of roots is displayed.
+Wherein "a" argument can be either "0" or non "0". In this case,
+the pair of roots consists of the same numbers,
+as in the case when the discriminate is zero.
