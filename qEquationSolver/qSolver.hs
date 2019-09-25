@@ -1,5 +1,4 @@
-solver :: (Float, Float, Float) -> (Float, Float)
-solver (a, b, c)
+solver a b c
     | a == 0.0 = (x, x)
     | a /= 0.0 = if d<0 then error "No Solutions" else (x1, x2)
         where
