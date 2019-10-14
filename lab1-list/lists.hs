@@ -22,3 +22,8 @@ myReverse :: [a] -> [a]
 myReverse [] = error "Empty list"
 myReverse [x] = [x]
 myReverse (xs) = myLast(xs) : myReverse(myInit(xs))
+
+myZip :: [a]->[b]->[(a,b)]
+myZip [] [] = error "Empty list"
+myZip [x] [y] = [(x,y)]
+myZip (x:xs) (y:ys) = (x,y) : myZip xs ys 
