@@ -36,6 +36,10 @@ myAppend :: [a] -> a -> [a]
 myAppend [] elem = [elem]
 myAppend (x:xs) elem = x : myAppend xs elem
 
+myDrop :: (Num b, Eq b) => b -> [a] -> [a]
+myDrop 0 xs = xs;
+myDrop n (x:xs) = myDrop (n-1) xs
+
 myTake :: (Num b, Eq b) => b -> [a] -> [a]
 myTake _ [] = []
 myTake 0 xs = []
@@ -48,6 +52,9 @@ myElem (x:xs) elem  = if elem == x then True else myElem xs elem
 myNull :: [a] -> Bool
 myNull [] = True
 myNull xs = False
+
+myMap :: (a->b)->[a]->[b]
+myMap f xs = foldr (\x acc ->f x: acc) [] xs
 
 myZip :: [a]->[b]->[(a,b)]
 myZip [] [] = error "Empty list"
