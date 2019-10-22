@@ -28,10 +28,12 @@ myReverse [] = error "Empty list"
 myReverse [x] = [x]
 myReverse xs = myLast(xs) : myReverse(myInit(xs))
 
---length not optimal
+--length not optimal // made faster
 myLenght :: [a] -> Integer
 myLenght [] = 0
-myLenght (x:xs) = 1 + myLenght xs
+myLenght xs = helper 0 xs where
+        helper acc [] = acc
+        helper acc (x:xs) = 1 + helper acc xs
 
 myAppend :: [a] -> a -> [a]
 myAppend [] elem = [elem]
@@ -58,7 +60,8 @@ myMap :: (a->b)->[a]->[b]
 myMap _ [] = []
 myMap f (x:xs) = (f x) : myMap f xs 
 
+--added checks for empty lists
 myZip :: [a]->[b]->[(a,b)]
-myZip [] [] = []
---myZip [x] [y] = [(x,y)]
+myZip xs [] = []
+myZip [] xy = []
 myZip (x:xs) (y:ys) = (x,y) : myZip xs ys 
