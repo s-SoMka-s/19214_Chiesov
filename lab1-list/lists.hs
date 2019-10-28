@@ -1,4 +1,4 @@
-myGet ::(Eq b, Num b) => [a] -> b -> a
+myGet ::[a] -> Integer -> a
 myGet [] _ = error "Empty list"
 myGet (x:xs) 0 = x
 myGet (x:xs) n = myGet xs (n-1) 
@@ -12,7 +12,6 @@ myLast [] = error "Empty list"
 myLast [x] = x
 myLast (x:xs) = myLast xs
 
-
 myTail :: [a] -> [a]
 myTail [] = error "Empty list"
 myTail [x] = []
@@ -23,27 +22,31 @@ myInit [] = error "Empty list"
 myInit [x] = []
 myInit (x:xs) = x : myInit xs
 
+--make faster - possible O(n) solution
 myReverse :: [a] -> [a]
 myReverse [] = error "Empty list"
 myReverse [x] = [x]
-myReverse (xs) = myLast(xs) : myReverse(myInit(xs))
+myReverse xs = myLast(xs) : myReverse(myInit(xs))
 
-myLenght :: Num b => [a] -> b
+--length not optimal // made faster
+myLenght :: [a] -> Integer
 myLenght [] = 0
-myLenght (x:xs) = 1 + myLenght xs
+myLenght xs = helper 0 xs where
+        helper acc [] = acc
+        helper acc (x:xs) = 1 + helper acc xs
 
 myAppend :: [a] -> a -> [a]
 myAppend [] elem = [elem]
 myAppend (x:xs) elem = x : myAppend xs elem
 
-myDrop :: (Num b, Eq b) => b -> [a] -> [a]
+myDrop :: Integer -> [a] -> [a]
 myDrop 0 xs = xs;
 myDrop n (x:xs) = myDrop (n-1) xs
 
-myTake :: (Num b, Eq b) => b -> [a] -> [a]
+myTake :: Integer -> [a] -> [a]
 myTake _ [] = []
 myTake 0 xs = []
-myTake n (x:xs) = x :( myTake (n-1) xs)
+myTake n (x:xs) = x : ( myTake (n-1) xs)
 
 myElem :: Eq a => [a] -> a -> Bool
 myElem [] _ = False
@@ -54,9 +57,11 @@ myNull [] = True
 myNull xs = False
 
 myMap :: (a->b)->[a]->[b]
-myMap f xs = foldr (\x acc ->f x: acc) [] xs
+myMap _ [] = []
+myMap f (x:xs) = (f x) : myMap f xs 
 
+--added checks for empty lists
 myZip :: [a]->[b]->[(a,b)]
-myZip [] [] = error "Empty list"
-myZip [x] [y] = [(x,y)]
+myZip xs [] = []
+myZip [] xy = []
 myZip (x:xs) (y:ys) = (x,y) : myZip xs ys 
