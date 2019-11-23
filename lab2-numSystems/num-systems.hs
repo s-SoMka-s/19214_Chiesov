@@ -39,8 +39,9 @@ fromDecimal toBase snumber
                         | otherwise = reverse (func (read snumber) toBase)
                             where
                                 func 0 toBase = []
-                                func number 1 = intToChar (1) : (func (number-1) toBase)
+                                func number 1 = replicate (read snumber) '1'
                                 func number toBase =  intToChar (number `mod` toBase) : (func (number `div` toBase) toBase)
+            
                                 
 convertFromTo :: Int -> Int -> String -> String
 convertFromTo fromBase toBase snumber = fromDecimal toBase (toDecimal fromBase snumber)
