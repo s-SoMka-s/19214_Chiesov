@@ -24,6 +24,9 @@ intToChar x
             | x >= 36 && x <= 61 = chr (x + 29)
             | otherwise = error "bad input"
 
+
+-- заменить возведение в степень на что-то более быстрое
+
 toDecimal :: Int -> String -> String
 toDecimal base snumber
                     | base > 61 || base < 1 = error "bad input"
@@ -32,6 +35,10 @@ toDecimal base snumber
                             func n [] base = 0
                             func n (x:xs) base = x * base^n + func (n-1) xs base
 
+
+
+-- убрать reverse. Тк слишком долго
+-- добавить проверку на то что toBase действительно число
 
 fromDecimal :: Int -> String -> String
 fromDecimal toBase snumber
