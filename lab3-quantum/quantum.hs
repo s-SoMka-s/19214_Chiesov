@@ -3,6 +3,12 @@ data QState a = QState a String
 type Qubit a = [QState a]
 
 -------------------------------------------------------------------
+-- istance Numeric
+-- entangle()
+
+--  r real part
+--  i image part
+--  c complex number
 
 instance (Eq a) => Eq (Complex a) where
     (Complex r1 i1) == (Complex r2 i2) = (r1 == r2) && (i1 == i2)
