@@ -25,29 +25,21 @@ intToChar x
             | otherwise = error "bad input"
 
 
--- заменить возведение в степень на что-то более быстрое
-
 toDecimal :: Int -> String -> String
 toDecimal base snumber
-                    | base > 61 || base < 1 = error "bad input"
-                    | otherwise = show $ func ((length snumber)-1) (map charToInt snumber) base
-                        where
-                            func n [] base = 0
-                            func n (x:xs) base = x * base^n + func (n-1) xs base
+                    | (base > 0) && (base < 62) = show $ foldl (\acc x -> base*acc + charToInt x) 0 snumber
+                    | otherwise = error "bad input"
 
 
-
--- убрать reverse. Тк слишком долго
--- добавить проверку на то что toBase действительно число
 
 fromDecimal :: Int -> String -> String
-fromDecimal toBase snumber
-                        | toBase > 61 || toBase < 1 = error "bad input"
-                        | otherwise = reverse (func (read snumber) toBase)
-                            where
-                                func 0 toBase = []
-                                func number 1 = replicate (read snumber) '1'
-                                func number toBase =  intToChar (number `mod` toBase) : (func (number `div` toBase) toBase)
+fromDecimal 1 snumber = replicate (read snumber) '1'
+fromDecimal toBase snumber = func (read snumber) toBase snumber
+                            where 
+                                func 0 toBase snumber = []
+                                func number toBase snumber 
+                                                        | (toBase > 0) && (toBase < 62) = func (number `div` toBase) toBase snumber ++ (intToChar (number `mod` toBase) : [])
+                                                        | otherwise = error "bad input"
             
                                 
 convertFromTo :: Int -> Int -> String -> String
