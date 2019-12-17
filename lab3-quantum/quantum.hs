@@ -1,10 +1,9 @@
+
 data Complex a = Complex a a
 data QState a = QState a String
 type Qubit a = [QState a]
 
 -------------------------------------------------------------------
--- istance Numeric
--- entangle()
 
 --  r real part
 --  i image part
@@ -21,6 +20,14 @@ instance (Show a) => Show (Complex a) where
 
 instance (Show a) => Show (QState a) where
     show (QState complex state) = show complex ++ " " ++ state 
+
+instance (Num a, Floating a) => Num (Complex a) where
+        (Complex r1 i1) + (Complex r2 i2) = Complex (r1 + r2) (i1 + i2)
+        (Complex r1 i1) * (Complex r2 i2) = Complex (r1*r2 - i1 * i2) (r1*r2 + i1 * i2)
+        abs (Complex r i) = Complex (sqrt $ r * r + i * i) 0
+        negate (Complex r i) = Complex r (negate i)
+        fromInteger int  = Complex 0 0
+        signum (Complex r i) = Complex (signum r) 0 
 
 instance Functor QState where
     fmap f (QState complex label) = QState (f complex) label
@@ -47,12 +54,12 @@ fromPairList :: [(a, String)] -> Qubit a
 fromPairList [] = []
 fromPairList pairList = [(QState complex state) | (complex, state) <- pairList]
 
-scalarProduct:: (Num a) => Qubit (Complex a) -> Qubit (Complex a) -> (Complex a)
+scalarProduct:: (Num a, Floating a) => Qubit (Complex a) -> Qubit (Complex a) -> (Complex a)
 scalarProduct [] [] = Complex 0 0
-scalarProduct ((QState c1 _):xs) ((QState c2 _):ys) = mSum (scalar c1 c2) (scalarProduct xs ys) 
-        where
-            scalar (Complex r1 i1) (Complex r2 i2) = Complex (r1*r2 - i1*i2) (r1*r2 + i1*i2)
-            mSum (Complex r1 i1) (Complex r2 i2) = Complex (r1 + r2) (i1 + i2)
+scalarProduct ((QState c1 _):xs) ((QState c2 _):ys) = (c1 * c2) + (scalarProduct xs ys) 
+
+entagle :: (Num a,  Floating a ) => Qubit (Complex a) -> Qubit (Complex a) -> Qubit (Complex a)
+entagle q1 q2 = [ QState (c1 * c1) (state1 ++ state2) | (QState c1 state1) <- q1 , (QState c2 state2) <- q1]
 
 -------------------------------------------------------------------
 
@@ -66,5 +73,3 @@ qs1 = QState c1 "uuu"
 qs2 = QState c2 "ggg"
 qs3 = QState (Complex 8 56) "kkkk"
 
-qubit = [qs1, qs2, qs3]
-qustatelist = [qs2, qs3]
