@@ -1,5 +1,9 @@
 import System.IO
-data HashTable key value = HashTable [[(key, value)]] deriving (Show)
+type Size = Int
+data HashTable key value = HashTable [[(key, value)]] Size deriving (Show)
+
+defaultHashTable :: HashTable k v
+defaultHashTable = HashTable [] 0
 
 main :: IO()
 main = do
