@@ -73,13 +73,16 @@ empty :: (Show k) => HashTable k v -> Bool
 empty (HashTable _ _ ecnt) = ecnt == 0
 
 -------------------------------------- Чтение из файла --------------------------------------
-
+{-
 main :: IO()
 main = do
     content <- lines <$> readFile "some.txt"
     let kvList = [(head $ words x, last $ words x) | x <- content]
-    let table = fromList kvList
     print(kvList)
+    let table = fromList kvList
+    print(table)
+-}
+
 
 ht = defaultHashTable 3
 x = insert ht 1 1
