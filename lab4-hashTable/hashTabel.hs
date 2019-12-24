@@ -8,10 +8,14 @@ data HashTable k v = HashTable [[(k, v)]] Capacity ECnt deriving (Show)
 
 hash :: (Show k) => k -> Int
 hash k = (foldl (\acc x -> acc + ord(x)) 0 (show k))
-
                                                                                
 fromList::(Show k, Eq k) => [(k,v)] -> HashTable k v
 fromList list = foldr (\p xs -> insert xs (fst p) (snd p)) (defaultHashTable $ length list * 2 + 1) list
+
+---
+getSameList ::(Eq hash) => HashTable k v -> hash -> [(k,v)]
+getSameList (HashTable table capacity ecnt) hash = concat $ filter (\(indx, hList) -> indx == hash) (zip [0..] table)
+---
 
 ----------------------------------- Функционал с pdf-ки -----------------------------------
 
@@ -37,6 +41,11 @@ insert (HashTable table capacity ecnt) k v = HashTable(
                                                                                 else
                                                                                     hList)             
                                                             (zip [0..] table)) capacity (ecnt + 1)
+
+----
+contains :: (Show k, Eq k) => HashTable k v -> k -> Bool
+contains (HashTable table capacity ecnt) k = empty $ getSameList (HashTable table capacity ecnt) ((hash k) `mod` capacity)
+---
 
 size :: (Show k) => HashTable k v -> Int
 size (HashTable _ capacity _) = capacity
