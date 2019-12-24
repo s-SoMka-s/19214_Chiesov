@@ -1,5 +1,4 @@
 import System.IO
-import Data.Bits
 import Data.Char
 
 type Capacity = Int
@@ -11,20 +10,24 @@ data HashTable k v = HashTable [[(k, v)]] Capacity ECnt deriving (Show)
 hash :: (Show k) => k -> Int
 hash k = (foldl (\acc x -> acc + ord(x)) 0 (show k))
                                                                                
-fromList::(Show k, Eq k) => [(k,v)] -> HashTable k v
-fromList list = foldr (\p xs -> insert xs (fst p) (snd p)) (defaultHashTable $ length list * 2 + 1) list
-
 -- Поиск вложенного списка c парами (k,v)
 -- На hashTable навешиваем индексацию
 -- Из получившегося списка вытаскиваем такой, где hash(k) == indx
-getSameList ::(Show k, Eq k) => HashTable k v -> k -> [(k,v)]
+getSameList :: (Show k, Eq k) => HashTable k v -> k -> [(k,v)]
 getSameList (HashTable table capacity ecnt) k = snd $ head $ filter (\(indx, hList) -> indx == ((hash k) `mod` capacity)) (zip [0..] table)
 
+checkLF :: (Eq k, Show k) => HashTable k v-> HashTable k v
+checkLF (HashTable table capacity ecnt) 
+                                        | ((fromIntegral ecnt) / (fromIntegral capacity)) > 0.5 = fromList $ concat table
+                                        | otherwise = HashTable table capacity ecnt
 
 ----------------------------------- Функционал с pdf-ки -----------------------------------
 
 defaultHashTable :: Int -> HashTable k v
 defaultHashTable capacity = HashTable (replicate capacity []) capacity 0
+
+fromList :: (Show k, Eq k) => [(k,v)] -> HashTable k v
+fromList list = foldr (\pair xs -> insert xs (fst pair) (snd pair)) (defaultHashTable $ length list * 2 + 1) list
 
 clear :: HashTable k v -> HashTable k v
 clear (HashTable table capacity ecnt) = HashTable (replicate capacity []) capacity 0
@@ -32,12 +35,12 @@ clear (HashTable table capacity ecnt) = HashTable (replicate capacity []) capaci
 -- Нужный подсписок в таблице изменям на
 -- Такой же, но без элемента, где k = key
 erase :: (Show k, Eq k) => HashTable k v -> k -> HashTable k v
-erase (HashTable table capacity ecnt) k = HashTable(
-                                                    map (\(indx, hList) ->  if indx == (hash k) `mod` capacity then
-                                                                                [elem | elem <- hList, fst elem /= k]
-                                                                            else
-                                                                                hList)
-                                                        (zip [0..] table)) capacity (ecnt - 1)
+erase (HashTable table capacity ecnt) k = checkLF $ HashTable(
+                                                                map (\(indx, hList) ->  if indx == (hash k) `mod` capacity then
+                                                                                            [elem | elem <- hList, fst elem /= k]
+                                                                                        else
+                                                                                            hList)
+                                                                    (zip [0..] table)) capacity (ecnt - 1)
 
 -- Находим нужный нам подсписок
 -- Изменяем его, добавлением нового элемента
@@ -73,8 +76,11 @@ empty (HashTable _ _ ecnt) = ecnt == 0
 
 main :: IO()
 main = do
-    content <- lines <$> readFile "result.txt"
+    content <- lines <$> readFile "some.txt"
     let kvList = [(head $ words x, last $ words x) | x <- content]
+    let table = fromList kvList
     print(kvList)
 
 ht = defaultHashTable 3
+x = insert ht 1 1
+xx = insert x 2 4
