@@ -1,23 +1,48 @@
 import System.IO
 import Data.Bits
 import Data.Char
-type MaxSize = Int
+
 type Capacity = Int
-data HashTable key value = HashTable [[(key, value)]] MaxSize Capacity deriving (Show)
+type ECnt = Int
+data HashTable k v = HashTable [[(k, v)]] Capacity ECnt deriving (Show)
 
-defaultHashTable :: HashTable k v
-defaultHashTable = HashTable [] 0 0
 
-hash :: String -> Int -> Int
-hash key size = (foldl (\acc x -> acc + ord(x)) 0 key) `mod` size
 
-size :: (Show key) => HashTable key value -> Int
-size (HashTable hTable maxSize capacity) = capacity
+hash :: (Show k) => k -> Int
+hash k = (foldl (\acc x -> acc + ord(x)) 0 (show k))
 
-empty :: (Show key) => HashTable key value -> Bool
-empty (HashTable hTable maxSize capacity)
-                                        | capacity == 0 = True
-                                        | otherwise = False
+
+                                                            
+                                                                                        
+
+
+
+
+
+
+fromList::(Show k, Eq k) => [(k,v)] -> HashTable k v
+fromList list = foldr (\p xs -> insert xs (fst p) (snd p)) (defaultHashTable $ length list * 2 + 1) list
+
+----------------------------------- Функционал с pdf-ки -----------------------------------
+
+defaultHashTable :: Int -> HashTable k v
+defaultHashTable capacity = HashTable (replicate capacity []) capacity 0
+
+insert :: (Show k, Eq k) => HashTable k v -> k -> v -> HashTable k v
+insert (HashTable table capacity ecnt) k v = HashTable(
+                                                        map (\(indx, hList) ->  if indx == ((hash k) `mod` capacity) then
+                                                                                    ([elem | elem <- hList, fst elem /= k] ++ [(k, v)])
+                                                                                else
+                                                                                    hList)             
+                                                            (zip [0..] table)) capacity (ecnt + 1)
+
+size :: (Show k) => HashTable k v -> Int
+size (HashTable _ capacity _) = capacity
+
+empty :: (Show k) => HashTable k v -> Bool
+empty (HashTable _ _ ecnt) = ecnt == 0
+
+-------------------------------------- Чтение из файла --------------------------------------
 
 main :: IO()
 main = do
