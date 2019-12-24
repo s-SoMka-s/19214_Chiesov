@@ -55,6 +55,13 @@ insert (HashTable table capacity ecnt) k v = HashTable(
 contains :: (Show k, Eq k) => HashTable k v -> k -> Bool
 contains (HashTable table capacity ecnt) k = length (getSameList (HashTable table capacity ecnt) k) == 0
 
+at :: (Show k, Eq k) => HashTable k v -> k -> Maybe v
+at (HashTable table capacity ecnt) k
+                                    | length result == 0 = Nothing
+                                    | otherwise = Just $ snd $ head result
+                                                                        where
+                                                                            result = getSameList (HashTable table capacity ecnt) k
+                                    
 
 size :: (Show k) => HashTable k v -> Int
 size (HashTable _ capacity _) = capacity
