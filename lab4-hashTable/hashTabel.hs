@@ -60,14 +60,13 @@ contains (HashTable table capacity ecnt) k = length (getSameList (HashTable tabl
 
 at :: (Show k, Eq k) => HashTable k v -> k -> Maybe v
 at (HashTable table capacity ecnt) k
-                                    | length result == 0 = Nothing
+                                    | null result = Nothing
                                     | otherwise = Just $ snd $ head result
                                                                         where
                                                                             result = getSameList (HashTable table capacity ecnt) k
                                     
-
 size :: (Show k) => HashTable k v -> Int
-size (HashTable _ capacity _) = capacity
+size (HashTable _ _ ecnt) = ecnt
 
 empty :: (Show k) => HashTable k v -> Bool
 empty (HashTable _ _ ecnt) = ecnt == 0
