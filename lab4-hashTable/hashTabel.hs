@@ -56,7 +56,7 @@ insert (HashTable table capacity ecnt) k v = HashTable(
 -- Посмотрим на вложенный список с парами (k,v)
 -- если он пустой, то такого k в таблице нет
 contains :: (Show k, Eq k) => HashTable k v -> k -> Bool
-contains (HashTable table capacity ecnt) k = length (getSameList (HashTable table capacity ecnt) k) == 0
+contains (HashTable table capacity ecnt) k = not $ null (getSameList (HashTable table capacity ecnt) k)
 
 at :: (Show k, Eq k) => HashTable k v -> k -> Maybe v
 at (HashTable table capacity ecnt) k
@@ -82,7 +82,6 @@ main = do
     print(table)
 -}
 
-
 ht = defaultHashTable 3
 x = insert ht 1 1
-xx = insert x 2 4
+xx = insert x 2 1
