@@ -18,9 +18,21 @@ runBrainfuck :: BrainfuckSource -> IO ()
 runBrainfuck = run emptyTape . bfSource2Tape where
     bfSource2Tape (b:bs) = Tape [] b bs
 
-run :: Tape Int
-    -> Tape BrainfuckCommand
-    -> IO ()
+run :: Tape Int -> Tape BrainfuckCommand -> IO ()
+
+-- moving the pivot
+-- source@() именованый образец
+-- даем структуре (Tape _ GoRight _) имя source
+run dataTape source@(Tape _ GoRight _) =
+    advance (moveRight dataTape) source
+
+run dataTape source@(Tape _ GoLeft _) =
+    advance (moveLeft dataTape) source
+
+advance :: Tape Int -> Tape BrainfuckCommand -> IO ()
+
+advance dataTape (Tape _ _ []) = return ()
+advance dataTape source = run dataTape (moveRight source)
 
 data BrainfuckCommand = GoRight -- >
                       | GoLeft -- <
