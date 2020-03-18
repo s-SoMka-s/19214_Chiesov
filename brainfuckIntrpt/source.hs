@@ -29,9 +29,6 @@ runBrainfuck :: BrainfuckSource -> IO ()
 runBrainfuck = run emptyTape . bfSource2Tape where
     bfSource2Tape (b:bs) = Tape [] b bs
 
--- moving the pivot
--- source@() именованый образец
--- даем структуре (Tape _ GoRight _) имя source
 run :: Tape Int -> Tape BrainfuckCommand -> IO ()
 run dataTape source@(Tape _ GoRight _) =
     advance (moveRight dataTape) source
@@ -61,6 +58,7 @@ run dataTape@(Tape _ p _) source@(Tape _ LoopL  _)
 run dataTape@(Tape _ p _) source@(Tape _ LoopR  _)
     | p /= 0 = seekLoopL 0 dataTape source
     | otherwise = advance dataTape source
+
 
 -- двигает фокус на sourceTape. Чтобы можно было перейти к исполнению другой операции
 advance :: Tape Int -> Tape BrainfuckCommand -> IO ()
@@ -99,20 +97,6 @@ data BrainfuckCommand = GoRight -- >
 
 type BrainfuckSource = [BrainfuckCommand]
 
-data BFSource = BFSource [BrainfuckCommand]
-
-instance Show BFSource where
-    show (BFSource xs) = show $ concat [convert x | x <- xs] where
-        convert x = case x of
-            GoRight -> ">"
-            GoLeft -> "<"
-            Increment -> "+"
-            Decrement -> "-"
-            Print -> "." 
-            Read -> "," 
-            LoopL -> "["
-            LoopR -> "]"
-
 checkSyntax :: BrainfuckSource -> Maybe BrainfuckSource
 checkSyntax code = if (sum $ map isValid code) == 0 then Just code else Nothing
     where
@@ -127,17 +111,17 @@ parseBrainfuck str = case parsed of
     Just (code) -> Right code
     Nothing -> Left "mismatched opening parenthesis"
     where
-        parsed = checkSyntax $ map charToBf str
+        parsed = checkSyntax $ mapMaybe charToBf str
         charToBf x = case x of
-            '>' -> GoRight
-            '<' -> GoLeft
-            '+' -> Increment
-            '-' -> Decrement
-            '.' -> Print
-            ',' -> Read
-            '[' -> LoopL
-            ']' -> LoopR
-            c -> Comment
+            '>' -> Just GoRight
+            '<' -> Just GoLeft
+            '+' -> Just Increment
+            '-' -> Just Decrement
+            '.' -> Just Print
+            ',' -> Just Read
+            '[' -> Just LoopL
+            ']' -> Just LoopR
+            c -> Nothing
 
 
 main = do
