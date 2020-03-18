@@ -94,6 +94,7 @@ data BrainfuckCommand = GoRight -- >
                       | Read -- ,
                       | LoopL -- [
                       | LoopR -- ]
+                      | Comment
                           deriving Show
 
 type BrainfuckSource = [BrainfuckCommand]
@@ -136,4 +137,12 @@ parseBrainfuck str = case parsed of
             ',' -> Read
             '[' -> LoopL
             ']' -> LoopR
+            c -> Comment
 
+
+main = do
+    text <- readFile "sample.bf"
+    let smt = parseBrainfuck text
+    case smt of
+        Left str -> putStrLn str
+        Right code -> runBrainfuck code
