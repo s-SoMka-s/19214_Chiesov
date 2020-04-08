@@ -3,6 +3,7 @@ import Data.List
 import System.IO
 import Data.Char
 import Data.Either
+import System.Environment
 
 data Tape a = Tape [a]
                     a
@@ -123,9 +124,9 @@ parseBrainfuck str = case parsed of
             ']' -> Just LoopR
             c -> Nothing
 
-
 main = do
-    text <- readFile "sample.bf"
+    args <- getArgs
+    text <- readFile (head args)
     let smt = parseBrainfuck text
     case smt of
         Left str -> putStrLn str
